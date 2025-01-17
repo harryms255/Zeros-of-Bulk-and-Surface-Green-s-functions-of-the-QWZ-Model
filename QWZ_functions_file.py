@@ -197,6 +197,33 @@ def analytic_SDOS(omega,kx,t,mu,alpha,eta=0.00001j):
 
 #Luttinger and Fermi Surfaces
 
+def analytic_luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
+    GF=recusive_QWZ_surface_Greens_function(omega, kx, t, mu, alpha)
+    
+    svd=np.min(np.linalg.svd(GF)[1])
+    
+    return  svd
+
+def analytic_luttinger_surface(kx,t,mu,alpha,eta=0.000001j):
+    zero_condition=lambda omega:luttinger_surface_condition(omega, kx, t, mu, alpha)
+    
+    zero=fsolve(zero_condition,x0=0)
+    
+    return zero
+
+def analytic_fermi_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
+    GF=recusive_QWZ_surface_Greens_function(omega, kx, t, mu, alpha)
+    
+    svd=1/np.max(np.linalg.svd(GF)[1])
+    return svd
+
+def analytic_fermi_surface(kx,t,mu,alpha,eta=0.0001j):
+    zero_condition=lambda omega:fermi_surface_condition(omega, kx, t, mu, alpha)
+    
+    zero=fsolve(zero_condition,x0=0)
+    
+    return zero
+
 def luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
     GF=recusive_QWZ_surface_Greens_function(omega, kx, t, mu, alpha)
     

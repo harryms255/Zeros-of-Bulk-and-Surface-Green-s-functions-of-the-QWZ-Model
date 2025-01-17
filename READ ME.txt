@@ -1,0 +1,37 @@
+README for Zeros of Surface Green's Functions of the QWZ Model
+
+Set of functions to calculate the bulk and surface Green's functions of the QWZ Model [PRB 92,085126 (2006)], a simple 2 band Chern insulator.There are functions that calculate the surface Green's function from the tight-binding model, recursively [J.Phys.F:Met.Phys. 15 851 (1985)] and analytically [Phys.Scr. 34 257 (1986)]. The edge bands and luttinger surfaces can also be calculated [PRB 106 L081112 (2022) ,http://arxiv.org/abs/2402.18820] by calculations of the singular value decompositions of the surface Green's function. These can be calculated with disorder and symmetry breaking (breaking the P^2=1 PHS) as well.
+
+Parameters Used:
+
+Ny: Int
+   Size of the system perpedicular to the edge
+
+omega: Float
+    Energy in Green's function
+
+eta: positive imaginary
+   Small imaginary regularisation (omega+eta)
+
+kx: Float between -pi and pi
+ Momentum along parrallel to the edge
+
+y: Float,
+   Propogation distance perpendicular to the interface in the Green's function
+
+t: Float,
+   Bandwidth, set to 1 to make everything unitless
+
+mu: Float, 
+    chemical potential, in units of t
+
+alpha: Complex
+    Nearest Neighbour Pairing (effective SOC)
+
+Disorder: List of random numbers of length of Ny
+    Randomised disorder added to each site
+
+SB: float
+   Symmetry break potetial that breaks the particle-hole symmetry of the model
+
+

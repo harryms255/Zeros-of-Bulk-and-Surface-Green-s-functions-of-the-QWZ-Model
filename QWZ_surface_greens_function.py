@@ -6,53 +6,6 @@ Created on Tue Jan 14 11:22:58 2025
 """
 from QWZ_functions_file import *
 
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# from tqdm import tqdm
-# import itertools as itr
-# plt.close("all")
-
-
-# def QHZ_real_space(kx,Ny,t,mu,alpha):
-    
-#     H=np.zeros((2*Ny,2*Ny))
-    
-#     for y in range(Ny-1):
-#         H[2*y,2*(y+1)]=-t/2
-#         H[2*y+1,2*(y+1)+1]=t/2
-        
-#         H[2*(y+1),2*y+1]=alpha
-#         H[2*y,2*(y+1)+1]=-alpha
-        
-#     for y in range(Ny):
-#         H[2*y,2*y+1]=alpha*np.sin(kx)
-        
-    
-#     H+=np.conj(H.T)
-    
-    
-#     for y in range(Ny):
-#         H[2*y,2*y]=mu-t*np.cos(kx)
-#         H[2*y+1,2*y+1]=t*np.cos(kx)-mu
-        
-        
-#     return H
-
-# def surface_Greens_function(omega,kx,Ny,t,mu,alpha):
-#     G=np.linalg.inv((omega+0.0000001j)*np.identity(2*Ny)-QHZ_real_space(kx, Ny, t, mu, alpha))
-    
-#     GS=G[:2,:2]
-    
-#     return GS
-
-# def SDOS(omega,kx,Ny,t,mu,alpha):
-#     #Surface Density of States
-#     GS=surface_Greens_function(omega, kx, Ny, t, mu, alpha)
-    
-#     LDOS_values=-1/np.pi*np.trace(np.imag(GS))
-    
-#     return LDOS_values
 
 Ny=251
 t=1
