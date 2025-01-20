@@ -96,9 +96,9 @@ def recusive_QWZ_surface_Greens_function(omega,kx,t,mu,alpha,eta=0.00001j,thresh
 
 def d_sigma(kx,z,t,mu,alpha,sign_y):
 
-    dx=alpha*np.sin(kx)
-    dy=alpha*(z-1/z)/(2j)*sign_y
-    dz=mu-np.cos(kx)-(z+1/z)/2
+    dx=alpha*np.sin(kx)*z
+    dy=alpha*(z**2-1)/(2j)*sign_y
+    dz=mu*z-np.cos(kx)*z-(z**2+1)/2
     
     sigma_x=np.array(([0,1],[1,0]),dtype=complex)
     sigma_y=np.array(([0,-1j],[1j,0]),dtype=complex)
@@ -106,21 +106,21 @@ def d_sigma(kx,z,t,mu,alpha,sign_y):
     
     return dx*sigma_x+dy*sigma_y+dz*sigma_z
 
-def coeff_a1(alpha):
+def coeff_a0(alpha):
     return alpha**2/4-1/4
 
-def coeff_a2(kx,mu):
+def coeff_a1(kx,mu):
     return (mu-np.cos(kx))
 
-def coeff_a3(omega,kx,mu,alpha,eta=0.00001j):
+def coeff_a2(omega,kx,mu,alpha,eta=0.00001j):
     return (omega+eta)**2-1/2-(mu-np.cos(kx))**2-alpha**2*np.sin(kx)**2-alpha**2/2
 
-def poles(omega,kx,mu,Delta,pm1,pm2,eta=0.00001j):
+def poles(omega,kx,mu,alpha,pm1,pm2,eta=0.00001j):
     
 
-    a=coeff_a1(Delta)
-    b=coeff_a2(kx, mu)
-    c=coeff_a3(omega, kx, mu, Delta,eta=eta)
+    a=coeff_a0(alpha)
+    b=coeff_a1(kx, mu)
+    c=coeff_a2(omega, kx, mu, alpha,eta=eta)
     
     
     pole=(-b+pm1*np.emath.sqrt(8*a**2-4*a*c+b**2))/(4*a)+pm2/2*np.emath.sqrt(b**2/(2*a**2)-c/a-2-pm1*b/(2*a**2)*np.emath.sqrt(b**2-4*a*c+8*a**2))
@@ -128,8 +128,18 @@ def poles(omega,kx,mu,Delta,pm1,pm2,eta=0.00001j):
 
 
 def analytic_GF(omega,kx,y,t,mu,alpha,eta=0.00001j):
-    pm=[1,-1]
-    pole_values=np.array(([poles(omega, kx, mu, alpha, pm1, pm2,eta=eta) for pm1,pm2 in itr.product(pm,pm)]))
+       
+    if alpha==t:
+        a1=coeff_a1(kx, mu)
+        a2=coeff_a2(omega, kx, mu, alpha)
+        p_plus=(-a2+np.sqrt(a2**2-4*a1**2))/(2*a1)
+        p_min=(-a2-np.sqrt(a2**2-4*a1**2))/(2*a1)
+        
+        pole_values=[0,p_plus,p_min]
+    
+    else:
+        pm=[1,-1]
+        pole_values=np.array(([poles(omega, kx, mu, alpha, pm1, pm2,eta=eta) for pm1,pm2 in itr.product(pm,pm)]))
     g=np.zeros((2,2),dtype=complex)
     
     if y==0:
@@ -149,7 +159,7 @@ def analytic_GF(omega,kx,y,t,mu,alpha,eta=0.00001j):
             
             denominator=np.prod(p-rm_pole_values)
             
-            g+=1/(t*(alpha**2/4-1/4)*denominator)*(p**(abs(y)+1)*((omega+eta)*np.identity(2)+d_sigma(kx, p, t, mu, alpha,sign_y)))
+            g+=1/(t*(alpha**2/4-1/4)*denominator)*(p**(abs(y))*((omega+eta)*p*np.identity(2)+d_sigma(kx, p, t, mu, alpha,sign_y)))
  
     return g
 
@@ -196,9 +206,22 @@ def analytic_SDOS(omega,kx,t,mu,alpha,eta=0.00001j):
     return LDOS_values
 
 #Luttinger and Fermi Surfaces
+def analytic_bulk_luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
+    GF=analytic_GF(omega, kx, 0, t, mu, alpha,eta=eta)
+    
+    svd=np.min(np.linalg.svd(GF)[1])
+    
+    return  svd
+
+def analytic_bulk_luttinger_surface(kx,t,mu,alpha,eta=0.0001j):
+    zero_condition=lambda omega:analytic_bulk_luttinger_surface_condition(omega, kx, t, mu, alpha,eta=eta)
+    
+    zero_pos=fsolve(zero_condition,x0=0.1)
+    zero_neg=fsolve(zero_condition,x0=-0.1)    
+    return zero_pos,zero_neg
 
 def analytic_luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
-    GF=recusive_QWZ_surface_Greens_function(omega, kx, t, mu, alpha)
+    GF=analytic_surface_Greens_function(omega,kx,t,mu,alpha,eta=0.00001j)
     
     svd=np.min(np.linalg.svd(GF)[1])
     
@@ -207,12 +230,12 @@ def analytic_luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
 def analytic_luttinger_surface(kx,t,mu,alpha,eta=0.000001j):
     zero_condition=lambda omega:luttinger_surface_condition(omega, kx, t, mu, alpha)
     
-    zero=fsolve(zero_condition,x0=0)
+    zero_pos=fsolve(zero_condition,x0=-0.1)
     
-    return zero
+    return zero_pos
 
 def analytic_fermi_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
-    GF=recusive_QWZ_surface_Greens_function(omega, kx, t, mu, alpha)
+    GF=analytic_surface_Greens_function(omega,kx,t,mu,alpha,eta=0.00001j)
     
     svd=1/np.max(np.linalg.svd(GF)[1])
     return svd
@@ -305,7 +328,3 @@ def SB_fermi_surface(kx,Ny,t,mu,alpha,SB,eta=0.0001j):
     zero=fsolve(zero_condition,x0=0)
     
     return zero
-
-
-
-

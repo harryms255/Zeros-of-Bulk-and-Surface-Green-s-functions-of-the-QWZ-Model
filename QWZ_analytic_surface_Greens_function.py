@@ -9,7 +9,7 @@ from QWZ_functions_file import *
 
 t=1
 alpha=0.25
-mu=1
+mu=1.5
 kx_values=np.linspace(-np.pi,np.pi,251)
 
 omega_values=np.linspace(-1,1,251)
