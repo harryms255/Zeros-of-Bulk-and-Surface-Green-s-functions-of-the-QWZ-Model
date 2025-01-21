@@ -17,7 +17,7 @@ plt.close("all")
 plt.rc('font', family='serif')
 plt.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}\usepackage{amssymb}'
 plt.rc('text', usetex=True)
-plt.rcParams.update({'font.size': 30})
+plt.rcParams.update({'font.size': 25})
 
 
 #Hamiltonians
@@ -230,7 +230,7 @@ def analytic_luttinger_surface_condition(omega,kx,t,mu,alpha,eta=0.0001j):
 def analytic_luttinger_surface(kx,t,mu,alpha,eta=0.000001j):
     zero_condition=lambda omega:luttinger_surface_condition(omega, kx, t, mu, alpha)
     
-    zero_pos=fsolve(zero_condition,x0=-0.1)
+    zero_pos=fsolve(zero_condition,x0=0.1)
     
     return zero_pos
 

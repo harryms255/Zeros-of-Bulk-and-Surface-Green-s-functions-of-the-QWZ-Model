@@ -31,8 +31,8 @@ for i in range(2*Ny):
 
 for kx_indx,kx in enumerate(tqdm(kx_values)):
     zero_values[0,kx_indx],zero_values[1,kx_indx]=analytic_bulk_luttinger_surface(kx, t, mu, alpha,eta=0.001j)
-ax.plot(kx_values/np.pi,zero_values[0,:],"b--",label="Zeros",linewidth=3)
-ax.plot(kx_values/np.pi,zero_values[1,:],"b--",linewidth=3)
+ax.plot(kx_values/np.pi,zero_values[0,:],"r--",label="Zeros",linewidth=3)
+ax.plot(kx_values/np.pi,zero_values[1,:],"r--",linewidth=3)
 ax.set_xlim(left=min(kx_values)/np.pi,right=max(kx_values)/np.pi)
 ax.set_ylim(top=1.5,bottom=-1.5)
 ax.set_xlabel(r"$k_x/\pi$")
